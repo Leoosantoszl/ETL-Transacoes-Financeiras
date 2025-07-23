@@ -1,0 +1,33 @@
+# Airflow
+airflow.cfg
+logs/
+*.pid
+*.sqlite
+unittests.cfg
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+*.pyo
+*.pyd
+*.db
+*.log
+data/
+*.parquet
+# Virtualenv
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+
+#Keaggle
+secrets/
+

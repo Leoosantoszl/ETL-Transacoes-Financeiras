@@ -5,39 +5,48 @@ from datetime import datetime, timedelta
 default_args = {
     'owner': 'leonardo',
     'depends_on_past': False,
-    'start_date': datetime(2025, 7, 7),
+    'start_date': datetime(2025, 7, 15),
     'retries': 1,
-    'retry_delay': timedelta(minutes=1),
+    'retry_delay': timedelta(minutes=2),
 }
 
 with DAG(
-    dag_id='pipeline_transacoes_financeiras',
+    dag_id='pipeline_transacoes_pyspark',
     default_args=default_args,
     schedule_interval='@daily',
     catchup=False,
-    description='Pipeline ETL de transações: bronze -> silver -> gold',
-    tags=['etl', 'transacoes', 'financeiro'],
+    description='Pipeline ETL com PySpark: bronze -> silver -> gold',
+    tags=['pyspark', 'etl'],
 ) as dag:
 
+    ingest_bank_marketing = BashOperator(
+        task_id='obter_dados_keaggle_bank',
+        bash_command='spark-submit /opt/airflow/scripts/ingest_bank_marketing.py'
+    )
+
+    ingest_CreditCard_Fraude = BashOperator(
+        task_id='obter_dados_keaggle_credit_fraude',
+        bash_command='spark-submit /opt/airflow/scripts/ingest_CreditCard_Fraude.py'
+    )
+
     bronze = BashOperator(
-        task_id='gerar_dados_bronze',
-        bash_command='python /home/leo/airflow/Projeto/src/bronze_ingestor.py'
+        task_id='executar_bronze',
+        bash_command='spark-submit /opt/airflow/scripts/bronze_ingestor.py'
     )
 
     silver = BashOperator(
-        task_id='limpar_e_padronizar_dados',
-        bash_command='python /home/leo/airflow/Projeto/src/silver_cleaner.py'
+        task_id='executar_silver',
+        bash_command='spark-submit /opt/airflow/scripts/silver_cleaner.py'
     )
 
     gold = BashOperator(
-        task_id='enriquecer_dados_gold',
-        bash_command='python /home/leo/airflow/Projeto/src/gold_enricher.py'
+        task_id='executar_gold',
+        bash_command='spark-submit /opt/airflow/scripts/gold_enricher.py'
     )
 
     contador = BashOperator(
-    task_id='contador_de_logs',
-    bash_command='python /home/leo/airflow/Projeto/src/utils/contador.py'
+        task_id='executar_contador',
+        bash_command='python3 /opt/airflow/scripts/utils/contador.py'
     )
 
-
-    contador >> bronze >> silver >> gold  # dependência sequencial
+    ingest_CreditCard_Fraude >> ingest_bank_marketing >> contador >> bronze >> silver >> gold 

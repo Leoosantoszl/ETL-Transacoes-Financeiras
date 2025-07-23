@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-*.log
-*.csv
-.env
-airflow.db
-logs/
-venv/
-*.egg-info
