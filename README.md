@@ -31,7 +31,7 @@ Este pipeline ETL simula transações bancárias e as **enriquece com dados púb
 - 🔥 **Apache Spark 4.0**
 - 🌬️ **Apache Airflow 2.7+**
 - 🐘 **PySpark**
-- 🐳 **Docker** (opcional, para execução isolada)
+- 🐳 **Docker**
 - 📦 **Kaggle Datasets + IBGE (dados públicos)**
 - 📊 **Streamlit**
 ---
@@ -53,9 +53,10 @@ Este pipeline ETL simula transações bancárias e as **enriquece com dados púb
 ├── dags/                       # DAGs do Airflow
 ├── data/                       # Dados particionados por camada (Bronze, Silver, Gold)
 ├── scripts/                    # Scripts PySpark de transformação
-├── dashboard/                  # Scripts Streamlit para visualização de dados
+├── dashboard/                  # Scripts Streamlit para visualização de dados e requerimentos
 ├── docker-compose.yml          # Orquestração com Docker
-├── Dockerfile                  # Imagem customizada Airflow + Spark
+├── Dockerfile.spark.airflow    # Imagem customizada Airflow + Spark
+├── Dockerfile.streamlit        # Imagem customizada Streamlit
 ├── requirements.txt            # Pacotes necessários
 └── README.md                   # Este documento
 
@@ -98,7 +99,7 @@ Clique em "Create New API Token"
 
 Isso irá baixar o arquivo kaggle.json com seu username e API token
 
-/home/seu_usuario/airflow/Projeto/secrets/kaggle.json ~/.kaggle/
+/home/seu_usuario/airflow/secrets/kaggle.json ~/.kaggle/
 
 chmod 600 ~/.kaggle/kaggle.json
 
@@ -107,21 +108,24 @@ chmod 600 ~/.kaggle/kaggle.json
 # Suba o docker 
 Utilize o dockerfile para buildar a imagem airflow + Spark
 
-docker-compose build
+docker-compose build (olhe a versao do seu docker caso seja a 2.0 o comando e retirado o "-")
 
 Depois utilize o comando para subir o docker
 
-docker-compose -d
+docker-compose up -d
 
-Acesse: http://localhost:8080
+espero alguns minutos e acesse: http://localhost:8080
 Login padrão: admin | Senha: admin
 
 Ative e execute a DAG: pipeline_transacoes_pyspark
 
+apos o processamento da camada Gold, entre no streamlit para ver os resultados.
+acesse: http://localhost:8051
+os graficos com os insights do projeto estaram disponivel la.
 
 
 👨‍💻 Autor
 Leonardo Oliveira dos Santos
-Engenheiro de Dados • Python | PySpark | Airflow 
+Engenheiro de Dados • Python | PySpark | Airflow | Streamlit| docker|
 LinkedIn https://www.linkedin.com/in/leonardo-oliveira-20083b1a2/  • GitHub https://github.com/Leoosantoszl?tab=repositories
 
