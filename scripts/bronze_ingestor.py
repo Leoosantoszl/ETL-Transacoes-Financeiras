@@ -19,7 +19,7 @@ escolaridades = ["Ensino Médio", "Técnico","Superior Incompleto", "Superior Co
 # Geração de dados fake com hora e histórico
 historico_clientes = {}
 dados = []
-numero = 1000
+numero = 20000
 
 for _ in range(numero):
     cliente_id = fake.uuid4()

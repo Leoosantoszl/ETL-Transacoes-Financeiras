@@ -12,7 +12,7 @@ from loguru import logger
 # api.authenticate()
 # Caminhos
 KAGGLE_DATASET = "mlg-ulb/creditcardfraud"
-OUTPUT_DIR = "/opt/airflow/data"
+OUTPUT_DIR = "/opt/airflow/data/kaggle_data/creditcardfraud/"
 
 
 def baixar_dados_kaggle_credit_card_fraud():

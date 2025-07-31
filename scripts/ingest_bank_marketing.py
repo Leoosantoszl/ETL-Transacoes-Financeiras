@@ -4,7 +4,7 @@ import pandas as pd
 from loguru import logger
 
 KAGGLE_DATASET = "janiobachmann/bank-marketing-dataset"
-OUTPUT_DIR = "/opt/airflow/data"
+OUTPUT_DIR = "/opt/airflow/data/kaggle_data/bank_marketing"
 
 def baixar_dados_bank_marketing():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -20,9 +20,9 @@ def baixar_dados_bank_marketing():
 def converter_parquet():
     df = pd.read_csv(os.path.join(OUTPUT_DIR, "bank.csv"))
     df['data_part'] = pd.to_datetime('now').strftime('%Y-%m-%d')
-    df.to_parquet(os.path.join(OUTPUT_DIR, "/kaggle_data/bank_marketing/bank_marketing.parquet"), index=False)
+    df.to_parquet(f"{OUTPUT_DIR}/bank_marketing.parquet",index=False)
     logger.success("Bank Marketing salvo como Parquet.")
 
-    if __name__ == "__main__":
-        baixar_dados_bank_marketing()
-        converter_parquet()
+if __name__ == "__main__":
+    baixar_dados_bank_marketing()
+    converter_parquet()

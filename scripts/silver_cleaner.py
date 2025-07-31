@@ -101,11 +101,14 @@ def limpar_e_enriquecer_dados_silver():
     try:
         df_fraude = spark.read.parquet("/opt/airflow/data/kaggle_data/creditcardfraud/creditcard.parquet") \
                               .withColumnRenamed("Class", "fraude")
+        df_fraude = df_fraude.withColumn("row_num", row_number().over(Window.orderBy("Time")))
         logger.success("✅ creditcard.parquet carregado com sucesso.")
-        # Se necessário usar no futuro, merge pode ser feito via row_num
+
+        df = df.join(df_fraude.select("row_num", "fraude"), on="row_num", how="left")
+        logger.success("✅ creditcard.parquet mesclado com sucesso.")
     except Exception as e:
-        logger.warning(f"⚠️ Erro ao carregar creditcard.parquet: {e}")
-        df_fraude = None
+        logger.warning(f"⚠️ Erro ao carregar ou mesclar creditcard.parquet: {e}")
+        # df_fraude = None
 
     try:
         df_marketing = spark.read.parquet("/opt/airflow/data/kaggle_data/bank_marketing/bank_marketing.parquet") \

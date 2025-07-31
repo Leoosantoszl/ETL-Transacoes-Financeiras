@@ -30,13 +30,12 @@ def transformar_para_gold():
     colunas_desejadas = [
         "id_transacao", "id_cliente", "cpf", "genero", "idade",
         "banco_origem_nome", "banco_destino_nome", "valor", "data_transacao",
-        "cidade", "estado", "profissao", "escolaridade", "emprestimo"
+        "cidade", "estado", "profissao", "escolaridade", "emprestimo","fraude"
     ]
 
-    colunas_existentes = [col for col in colunas_desejadas if col in df.columns]
+    colunas_existentes = [c for c in colunas_desejadas if c in df.columns]
     colunas_ordenadas = colunas_existentes + [c for c in df.columns if c not in colunas_existentes]
     df = df.select(colunas_ordenadas)
-
 
     logger.info(f"💾 Salvando camada Gold particionada por 'data_part'...")
     df.write.mode("overwrite").partitionBy("data_part").parquet("/opt/airflow/data/Gold")
