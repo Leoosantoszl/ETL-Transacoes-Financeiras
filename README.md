@@ -33,7 +33,7 @@ Este pipeline ETL simula transações bancárias e as **enriquece com dados púb
 - 🐘 **PySpark**
 - 🐳 **Docker** (opcional, para execução isolada)
 - 📦 **Kaggle Datasets + IBGE (dados públicos)**
-
+- 📊 **Streamlit**
 ---
 
 ## 🧱 Arquitetura em Camadas (Medallion Architecture)
@@ -53,6 +53,7 @@ Este pipeline ETL simula transações bancárias e as **enriquece com dados púb
 ├── dags/                       # DAGs do Airflow
 ├── data/                       # Dados particionados por camada (Bronze, Silver, Gold)
 ├── scripts/                    # Scripts PySpark de transformação
+├── dashboard/                  # Scripts Streamlit para visualização de dados
 ├── docker-compose.yml          # Orquestração com Docker
 ├── Dockerfile                  # Imagem customizada Airflow + Spark
 ├── requirements.txt            # Pacotes necessários
