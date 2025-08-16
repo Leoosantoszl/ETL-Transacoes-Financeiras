@@ -7,7 +7,9 @@ from loguru import logger
 
 # Função para mascarar CPF
 def mascarar_cpf(cpf: str) -> str:
-    if cpf and len(cpf) >= 11:
+    if cpf is None:
+        return "None.***.***-**"
+    if len(cpf) >= 11:
         return cpf[:3] + ".***.***-" + cpf[-2:]
     return cpf[:3] + ".***.***-**"
 

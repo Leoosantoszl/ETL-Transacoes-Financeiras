@@ -1,0 +1,38 @@
+#cloud-config
+package_update: true
+packages:
+  - docker.io
+  - docker-compose-plugin
+  - git
+  - python3-pip
+
+runcmd:
+  # Instala dependências Python
+  - pip3 install kaggle
+
+  # Habilita e inicia o Docker
+  - systemctl enable docker
+  - systemctl start docker
+
+  # Adiciona usuário ao grupo docker
+  - usermod -aG docker azureuser
+  - sudo apt update
+  - sudo apt  install docker-compose
+
+  # Aguarda Docker iniciar
+  - bash -c 'until docker info >/dev/null 2>&1; do echo "Esperando Docker..."; sleep 3; done'
+
+  # Clona o repositório como azureuser
+  - sudo -u azureuser bash -c 'if [ ! -d "/home/azureuser/projeto" ]; then git clone https://github.com/Leoosantoszl/ETL-Transacoes-Financeiras.git /home/azureuser/projeto; fi'
+
+  # Ajusta permissões
+  - chown -R azureuser:azureuser /home/azureuser/projeto
+
+  # Sobe containers usando o novo docker compose (plugin)
+  - sudo -u azureuser bash -c 'cd /home/azureuser/projeto && docker compose up -d'
+
+  - apt-get remove -y docker-compose
+  - curl -SL https://get.docker.com | sh
+  - curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  - chmod +x /usr/local/bin/docker-compose
+

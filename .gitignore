@@ -31,5 +31,16 @@ venv.bak/
 .vscode/
 
 #Keaggle
-secrets/
+*.json
 
+# Terraform
+.terraform/
+terraform.tfstate*
+*.backup
+
+# Docker
+*.log
+*.pid
+.env
+.vscode/
+.dockerignore

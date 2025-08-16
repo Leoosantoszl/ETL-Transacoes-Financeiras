@@ -19,7 +19,7 @@ escolaridades = ["Ensino Médio", "Técnico","Superior Incompleto", "Superior Co
 # Geração de dados fake com hora e histórico
 historico_clientes = {}
 dados = []
-numero = 20000
+numero = 100000
 
 for _ in range(numero):
     cliente_id = fake.uuid4()
@@ -28,7 +28,7 @@ for _ in range(numero):
             "score_credito": random.randint(300, 850)
         }
 
-    valor = round(random.uniform(-1000, 8000), 2)
+    valor = round(random.uniform(-1000, 10000), 2)
     data_hora = fake.date_time_between(start_date='-30d', end_date='now')
 
     dados.append({

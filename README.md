@@ -5,23 +5,25 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-em%20desenvolvimento-yellow" />
+  <img src="https://img.shields.io/badge/status-concluído-brightgreen" />
   <img src="https://img.shields.io/badge/python-3.10-blue" />
   <img src="https://img.shields.io/badge/spark-4.0-orange" />
   <img src="https://img.shields.io/badge/airflow-2.7+-green" />
+  <img src="https://img.shields.io/badge/terraform-Azure-blueviolet" />
 </p>
 
 ---
 
 ## 🧭 Visão Geral
 
-Este pipeline ETL simula transações bancárias e as **enriquece com dados públicos** para identificar padrões e facilitar análises. O projeto foca em:
+Este pipeline ETL simula transações bancárias e as **enriquece com dados públicos** para identificar padrões e facilitar análises.  
+Principais recursos:
 
-- 🔄 Orquestração com Airflow  
-- ⚡ Processamento distribuído com PySpark  
+- 🔄 Orquestração com **Apache Airflow**  
+- ⚡ Processamento distribuído com **PySpark**  
 - 🔒 Segurança com mascaramento de dados sensíveis  
 - 📈 Escalabilidade e observabilidade  
-- 🧱 Arquitetura em camadas (Bronze, Silver, Gold)
+- 🧱 Arquitetura em camadas (**Bronze, Silver, Gold**)
 
 ---
 
@@ -31,18 +33,22 @@ Este pipeline ETL simula transações bancárias e as **enriquece com dados púb
 - 🔥 **Apache Spark 4.0**
 - 🌬️ **Apache Airflow 2.7+**
 - 🐘 **PySpark**
-- 🐳 **Docker**
+- 🐳 **Docker + Docker Compose**
 - 📦 **Kaggle Datasets + IBGE (dados públicos)**
 - 📊 **Streamlit**
+- 🐘 **PostgreSQL**
+- ☁️ **Azure Virtual Machine**
+- 📜 **Terraform** (Infra como Código)
+
 ---
 
 ## 🧱 Arquitetura em Camadas (Medallion Architecture)
 
 | Camada  | Descrição |
 |---------|----------|
-| 🟤 **Bronze** | Dados simulados brutos gerados com `Faker` |
+| 🟤 **Bronze** | Dados brutos simulados com `Faker` |
 | ⚪ **Silver** | Dados limpos, validados e enriquecidos |
-| 🟡 **Gold**   | Dados mascarados e cruzados com IBGE, Receita e Kaggle |
+| 🟡 **Gold**   | Dados mascarados e integrados com dados públicos |
 
 ---
 
@@ -51,19 +57,30 @@ Este pipeline ETL simula transações bancárias e as **enriquece com dados púb
 ```bash
 .
 ├── dags/                       # DAGs do Airflow
-├── data/                       # Dados particionados por camada (Bronze, Silver, Gold)
-├── scripts/                    # Scripts PySpark de transformação
-├── dashboard/                  # Scripts Streamlit para visualização de dados e requerimentos
-├── docker-compose.yml          # Orquestração com Docker
-├── Dockerfile.spark.airflow    # Imagem customizada Airflow + Spark
-├── Dockerfile.streamlit        # Imagem customizada Streamlit
-├── requirements.txt            # Pacotes necessários
-└── README.md                   # Este documento
+├── data/                       # Dados particionados (Bronze, Silver, Gold)
+├── tests/
+│   ├── test_etl.py           # Testes de funções do ETL
+│   ├── test_transform.py     # Testes de transformações PySpark
+│   └── test_utils.py         # Funções utilitárias
+├── scripts/                    # Scripts PySpark
+├── docker-compose.yml          # Orquestração de containers
+├── Dockerfile.airflow.spark    # Airflow + Spark
+├── Dockerfile.streamlit        # Dashboard Streamlit
+├── requirements.txt            # Dependências Python
+├── secrets/                    # Contém kaggle.json (não versionado)
+├── infra/
+│   └── terraform/              # Código IaC para Azure
+│       ├── main.tf
+│       ├── variables.tf
+│       ├── terraform.tfvars
+│       └── outputs.tf
+└── README.md
 
 
 
-## Dados Utilizados
-Simulação de Transações (geradas com Faker)
+📊 Dados Utilizados
+
+Simulação: Geradas com Faker
 
 Kaggle:
 
@@ -71,53 +88,138 @@ creditcard.csv
 
 bank_marketing_full.csv
 
-IBGE: lista de municípios e estados
+IBGE: Municípios e Estados
 
-Receita Federal (simulada): nomes de bancos
+Receita Federal (simulada): Nomes de bancos
 
 
 
-### COMO EXECUTAR O PROJETO 
-🚀 Como Executar o Projeto
-1. Clonar o Repositório
+🚀 Como Executar Localmente
+1️⃣ Clonar o Repositório
+git clone https://github.com/Leoosantoszl/ETL-Transacoes-Financeiras.git
+cd ETL-Transacoes-Financeiras
 
-git clone https://github.com/seu-usuario/transacoes-financeiras-pipeline.git
-cd transacoes-financeiras-pipeline
-
-2. Criar Ambiente Virtual
-
+2️⃣ Criar e Ativar Ambiente Virtual
 python3 -m venv airflow-env
 source airflow-env/bin/activate
 pip install -r requirements.txt
 
-3. Baixando o kaggle.json
+3️⃣ Configurar kaggle.json
+
 Vá até: https://www.kaggle.com/settings
 
-Role até a seção "API"
+Na seção API, clique em Create New API Token
 
-Clique em "Create New API Token"
+Isso irá baixar kaggle.json
 
-Isso irá baixar o arquivo kaggle.json com seu username e API token
+Mova o arquivo para:
 
-/home/seu_usuario/airflow/secrets/kaggle.json ~/.kaggle/
+mkdir -p secrets
+mv ~/Downloads/kaggle.json secrets/
+chmod 600 secrets/kaggle.json
 
-chmod 600 ~/.kaggle/kaggle.json
+4️⃣ Subir Containers
+docker compose build
+docker compose up -d
 
-4. Subir o Airflow e Executar DAG
 
-# Suba o docker 
-Utilize o dockerfile para buildar a imagem airflow + Spark
+Acesse Airflow: http://localhost:8080
+Usuário: admin
+Senha: admin
 
-docker-compose build (olhe a versao do seu docker caso seja a 2.0 o comando e retirado o "-")
+Ative e execute a DAG pipeline_transacoes_pyspark
 
-Depois utilize o comando para subir o docker
 
-docker-compose up -d
+☁️ Deploy na Azure com Terraform
+1️⃣ Instalar Dependências
+# Azure CLI
+Azure 
 
-espero alguns minutos e acesse: http://localhost:8080
-Login padrão: admin | Senha: admin
+Instale a Azure CLI (caso ainda não tenha):
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
-Ative e execute a DAG: pipeline_transacoes_pyspark
+Faça login na Azure
+az login --use-device-code
+az login
+az account show
+
+
+Se você tiver múltiplas assinaturas:
+az account set --subscription "ID-ou-Nome-da-Sua-Subscription"
+
+
+# Terraform
+Passo a passo para instalar o Terraform (Linux/WSL)
+Instalar dependências:
+
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl unzip
+Adicionar o repositório oficial do Terraform:
+
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/hashicorp.gpg
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+Instalar o Terraform:
+
+sudo apt-get update && sudo apt-get install terraform
+Verificar instalação:
+
+terraform -v
+2️⃣ Autenticar na Azure
+az login --use-device-code
+az account set --subscription "SUA_SUBSCRIPTION"
+
+3️⃣ Provisionar Infraestrutura
+cd infra/terraform
+terraform init
+terraform plan
+terraform apply -auto-approve
+
+
+Isso criará a VM com Docker, Docker Compose e o projeto já configurado via cloud-init.
+
+4️⃣ Conectar na VM
+ssh azureuser@IP_DA_VM
+
+Configurar kaggle.json
+
+Vá até: https://www.kaggle.com/settings
+
+Na seção API, clique em Create New API Token
+
+Isso irá baixar kaggle.json
+
+Mova o arquivo para:
+
+mkdir -p secrets
+mv ~/Downloads/kaggle.json secrets/
+chmod 600 secrets/kaggle.json
+
+pip install -r requirements.txt
+
+A aplicação já estará rodando e o Airflow acessível pelo IP público na porta 8080
+
+
+
+🧪 Testes
+
+O projeto possui testes automatizados para as camadas Silver e Gold, garantindo que a transformação e o enriquecimento dos dados estejam corretos.
+
+1. Pré-requisitos
+
+Ter o Python 3.10+ instalado.
+
+Ter o PySpark instalado (pip install pyspark).
+
+Ter o pytest instalado (pip install pytest).
+
+2. Estrutura dos testes
+
+scripts/tests/test_silver.py: Testa funções de limpeza e enriquecimento da camada Silver, incluindo filtros de CPF, valores e nomes de bancos.
+
+scripts/tests/test_gold.py: Testa funções da camada Gold, como mascaramento de CPF e reorganização de colunas.
+
+rode o comando
+PYTHONPATH=$(pwd) pytest
+
 
 apos o processamento da camada Gold, entre no streamlit para ver os resultados.
 acesse: http://localhost:8051
@@ -126,6 +228,7 @@ os graficos com os insights do projeto estaram disponivel la.
 
 👨‍💻 Autor
 Leonardo Oliveira dos Santos
-Engenheiro de Dados • Python | PySpark | Airflow | Streamlit| docker|
+Engenheiro de Dados | Python | PySpark | Airflow | Docker | Terraform |
 LinkedIn https://www.linkedin.com/in/leonardo-oliveira-20083b1a2/  • GitHub https://github.com/Leoosantoszl?tab=repositories
+
 
