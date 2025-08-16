@@ -59,14 +59,14 @@ Principais recursos:
 ├── dags/                       # DAGs do Airflow
 ├── data/                       # Dados particionados (Bronze, Silver, Gold)
 ├── tests/
-│   ├── test_etl.py           # Testes de funções do ETL
-│   ├── test_transform.py     # Testes de transformações PySpark
-│   └── test_utils.py         # Funções utilitárias
+│   ├── test_silver.py           # Testes de funções da camada Silver
+│   └── test_gold.py             # Testes de funções da camada Gold
+│
 ├── scripts/                    # Scripts PySpark
 ├── docker-compose.yml          # Orquestração de containers
 ├── Dockerfile.airflow.spark    # Airflow + Spark
 ├── Dockerfile.streamlit        # Dashboard Streamlit
-├── requirements.txt            # Dependências Python
+├── requirements.txt            # Dependências
 ├── secrets/                    # Contém kaggle.json (não versionado)
 ├── infra/
 │   └── terraform/              # Código IaC para Azure
@@ -119,7 +119,7 @@ mv ~/Downloads/kaggle.json secrets/
 chmod 600 secrets/kaggle.json
 
 4️⃣ Subir Containers
-docker compose build
+docker compose build (Caso não tenha as imagens que veem no projeto)
 docker compose up -d
 
 
@@ -171,7 +171,7 @@ az account set --subscription "SUA_SUBSCRIPTION"
 cd infra/terraform
 terraform init
 terraform plan
-terraform apply -auto-approve
+terraform apply
 
 
 Isso criará a VM com Docker, Docker Compose e o projeto já configurado via cloud-init.
