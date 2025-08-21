@@ -211,7 +211,7 @@ A aplicação já estará rodando e o Airflow acessível pelo IP público na por
 
 
 apos o processamento da camada Gold, entre no streamlit para ver os resultados.
-acesse: http://localhost:8051
+acesse: IP_VM:8051
 os graficos com os insights do projeto estaram disponivel la.
 
 🧪 Testes
