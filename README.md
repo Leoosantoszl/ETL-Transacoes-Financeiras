@@ -179,6 +179,12 @@ Isso criará a VM com Docker, Docker Compose e o projeto já configurado via clo
 4️⃣ Conectar na VM
 ssh azureuser@IP_DA_VM
 
+Instale as dependencias
+
+cd projeto
+
+pip install -r requirements.txt
+
 Configurar kaggle.json
 
 Vá até: https://www.kaggle.com/settings
@@ -186,7 +192,8 @@ Vá até: https://www.kaggle.com/settings
 Na seção API, clique em Create New API Token
 
 Isso irá baixar kaggle.json
-Rode o comando para trasnferir o arquivo para sua VM, lembrando de alterar o caminho do arquivo e o IP da VM
+Rode o comando para transferir o arquivo para sua VM, lembrando de alterar o caminho do arquivo e o IP da VM
+normalmente por padrão a chave rsa fica nesse diretorio
 scp -i ~/.ssh/id_rsa (caminho arquivo)kaggle.json azureuser@(IP VM):/home/azureuser/
 
 acesse a pasta do projeto:
@@ -199,7 +206,6 @@ chmod 600 ~/projeto/secrets/kaggle.json
 Depois acesse a pasta do projeto e rode o comando
 
 sudo docker-compose up -d
-rode o comando 
 
 A aplicação já estará rodando e o Airflow acessível pelo IP público na porta 8080
 
