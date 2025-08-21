@@ -186,18 +186,27 @@ Vá até: https://www.kaggle.com/settings
 Na seção API, clique em Create New API Token
 
 Isso irá baixar kaggle.json
+Rode o comando para trasnferir o arquivo para sua VM, lembrando de alterar o caminho do arquivo e o IP da VM
+scp -i ~/.ssh/id_rsa (caminho arquivo)kaggle.json azureuser@(IP VM):/home/azureuser/
+
+acesse a pasta do projeto:
 
 Mova o arquivo para:
 
-mkdir -p secrets
-mv ~/Downloads/kaggle.json secrets/
-chmod 600 secrets/kaggle.json
+mv ~/kaggle.json projeto/secrets/
+chmod 600 ~/projeto/secrets/kaggle.json
 
-pip install -r requirements.txt
+Depois acesse a pasta do projeto e rode o comando
+
+sudo docker-compose up -d
+rode o comando 
 
 A aplicação já estará rodando e o Airflow acessível pelo IP público na porta 8080
 
 
+apos o processamento da camada Gold, entre no streamlit para ver os resultados.
+acesse: http://localhost:8051
+os graficos com os insights do projeto estaram disponivel la.
 
 🧪 Testes
 
@@ -220,10 +229,6 @@ scripts/tests/test_gold.py: Testa funções da camada Gold, como mascaramento de
 rode o comando
 PYTHONPATH=$(pwd) pytest
 
-
-apos o processamento da camada Gold, entre no streamlit para ver os resultados.
-acesse: http://localhost:8051
-os graficos com os insights do projeto estaram disponivel la.
 
 
 👨‍💻 Autor
