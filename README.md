@@ -16,8 +16,7 @@
 
 ## 🧭 Visão Geral
 
-Este pipeline ETL simula transações bancárias e as **enriquece com dados públicos** para identificar padrões e facilitar análises e realizar um modelo de machine learning que nos ajuda a prever fraudes.
-
+Este pipeline ETL simula transações bancárias e as **enriquece com dados públicos** para identificar padrões e facilitar análises.  
 Principais recursos:
 
 - 🔄 Orquestração com **Apache Airflow**  
@@ -93,12 +92,47 @@ IBGE: Municípios e Estados
 
 Receita Federal (simulada): Nomes de bancos
 
-Lembrando que podemos executar de forma local ou cloud (Azure)
+
+
+🚀 Como Executar Localmente
+1️⃣ Clonar o Repositório
+git clone https://github.com/Leoosantoszl/ETL-Transacoes-Financeiras.git
+cd ETL-Transacoes-Financeiras
+
+2️⃣ Criar e Ativar Ambiente Virtual
+python3 -m venv airflow-env
+source airflow-env/bin/activate
+pip install -r requirements.txt
+
+3️⃣ Configurar kaggle.json
+
+Vá até: https://www.kaggle.com/settings
+
+Na seção API, clique em Create New API Token
+
+Isso irá baixar kaggle.json
+
+Mova o arquivo para:
+
+mkdir -p secrets
+mv ~/Downloads/kaggle.json secrets/
+chmod 600 secrets/kaggle.json
+
+4️⃣ Subir Containers
+docker compose build (Caso não tenha as imagens que veem no projeto)
+docker compose up -d
+
+
+Acesse Airflow: http://localhost:8080
+Usuário: admin
+Senha: admin
+
+Ative e execute a DAG pipeline_transacoes_pyspark
 
 
 ☁️ Deploy na Azure com Terraform
 1️⃣ Instalar Dependências
-
+# Azure CLI
 Azure 
 
 Instale a Azure CLI (caso ainda não tenha):
@@ -129,37 +163,20 @@ sudo apt-get update && sudo apt-get install terraform
 Verificar instalação:
 
 terraform -v
-
 2️⃣ Autenticar na Azure
 az login --use-device-code
 az account set --subscription "SUA_SUBSCRIPTION"
 
-3️⃣ Pegar arquivos do Git
-
-git clone https://github.com/Leoosantoszl/ETL-Transacoes-Financeiras.git
-cd projeto
-
-4️⃣ Configurar kaggle.json
-Fora da VM:
-Vá até: https://www.kaggle.com/settings
-faça login com sua conta
-
-Na seção API, clique em Create New API Token
-
-Isso irá baixar kaggle.json
-
-Agora podemos seguir com o projeto:
-
-5️⃣ Provisionar Infraestrutura
-
-cd projeto/IAC/terraform
+3️⃣ Provisionar Infraestrutura
+cd infra/terraform
 terraform init
 terraform plan
 terraform apply
 
+
 Isso criará a VM com Docker, Docker Compose e o projeto já configurado via cloud-init.
 
-6️⃣ - Conectar na VM, instalar dependencias, e rodar projeto
+4️⃣ Conectar na VM
 ssh azureuser@IP_DA_VM
 
 Instale as dependencias
@@ -168,15 +185,20 @@ cd projeto
 
 pip install -r requirements.txt
 
-Após instalar as dependencias na sua VM, vá na sua maquina onde foi baixado o arquivo kaggle.json
+Configurar kaggle.json
+
+Vá até: https://www.kaggle.com/settings
+
+Na seção API, clique em Create New API Token
+
+Isso irá baixar kaggle.json
 Rode o comando para transferir o arquivo para sua VM, lembrando de alterar o caminho do arquivo e o IP da VM
-normalmente por padrão a chave rsa fica nesse diretorio(só confira se a sua está)
+normalmente por padrão a chave rsa fica nesse diretorio
+scp -i ~/.ssh/id_rsa (caminho arquivo)kaggle.json azureuser@(IP VM):/home/azureuser/
 
-scp -i ~/.ssh/id_rsa (caminho arquivo)/kaggle.json azureuser@(IP VM):/home/azureuser/
+acesse a pasta do projeto:
 
-E coloque sua senha rsa
-Agora dentro da VM:
-Mova o arquivo para o diretorio secrets dentro do projeto e de permissão para ele:
+Mova o arquivo para:
 
 mv ~/kaggle.json projeto/secrets/
 chmod 600 ~/projeto/secrets/kaggle.json
@@ -187,47 +209,10 @@ sudo docker-compose up -d
 
 A aplicação já estará rodando e o Airflow acessível pelo IP público na porta 8080
 
+
 apos o processamento da camada Gold, entre no streamlit para ver os resultados.
 acesse: IP_VM:8051
 os graficos com os insights do projeto estaram disponivel la.
-
-Agora de forma local:
-
-🚀 Como Executar Localmente
-1️⃣ Clonar o Repositório
-git clone https://github.com/Leoosantoszl/ETL-Transacoes-Financeiras.git
-cd projeto
-
-2️⃣ Criar e Ativar Ambiente Virtual
-
-python3 -m venv airflow-env
-source airflow-env/bin/activate
-pip install -r requirements.txt
-
-3️⃣ Configurar kaggle.json
-
-Vá até: https://www.kaggle.com/settings
-
-Na seção API, clique em Create New API Token
-
-Isso irá baixar kaggle.json
-
-Mova o arquivo para:
-
-mkdir -p secrets
-mv ~/Downloads/kaggle.json secrets/
-chmod 600 secrets/kaggle.json
-
-4️⃣ Subir Containers
-docker compose build (Caso não tenha as imagens que veem no projeto)
-docker compose up -d
-
-
-Acesse Airflow: http://localhost:8080
-Usuário: admin
-Senha: admin
-
-Ative e execute a DAG pipeline_transacoes_pyspark
 
 🧪 Testes
 
