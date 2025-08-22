@@ -14,10 +14,12 @@ __pycache__/
 *.pyd
 *.db
 *.log
-data/
+data/*.csv
+data/*.parquet
 dados/kaggle_data/*
-dados/
+dados
 *.parquet
+*.csv
 # Virtualenv
 .env
 .venv
