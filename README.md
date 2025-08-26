@@ -130,10 +130,7 @@ az login --use-device-code
 az account set --subscription "SUA_SUBSCRIPTION"
 
 
-3️⃣ Clonar o Repositório
-git clone https://github.com/Leoosantoszl/ETL-Transacoes-Financeiras.git
-
-2️⃣ Configurar kaggle.json
+3️⃣ Configurar kaggle.json
 Em sua maquina local
 
 Vá até: https://www.kaggle.com/settings
@@ -143,7 +140,7 @@ Na seção API, clique em Create New API Token
 Isso irá baixar kaggle.json em sua maquina local
 
 
-3️⃣ Provisionar Infraestrutura
+4️⃣ Provisionar Infraestrutura
 cd projeto/IAC/terraform
 terraform init
 terraform plan (caso queira ver o que será provisionado)
@@ -160,7 +157,7 @@ scp -i ~/.ssh/id_rsa (caminho arquivo)/kaggle.json azureuser@(IP_VM):/home/azure
 Pedirá a sua senha rsa
 Após isso vamos acessar a VM
 
-4️⃣ Conectar na VM
+5️⃣ Conectar na VM
 ssh azureuser@IP_DA_VM
 
 Mova o arquivo e de permissão a ele
@@ -168,7 +165,7 @@ Mova o arquivo e de permissão a ele
 mv ~/kaggle.json projeto/secrets/
 chmod 600 ~/projeto/secrets/kaggle.json
 
-5️⃣ Instale as dependencias do projeto na VM
+6️⃣ Instale as dependencias do projeto na VM
 
 cd projeto
 
