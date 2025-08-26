@@ -20,7 +20,7 @@ x-airflow-common:
     - ./scripts:/opt/airflow/scripts
     - ./plugins:/opt/airflow/plugins
     - ./logs:/opt/airflow/logs
-    - ./data:/opt/airflow/data          # bronze/silver/gold
+    - ./data:/opt/airflow/data         # volume para dados parquet/csv, bronze/silver/gold
   depends_on:
     - postgres
   restart: always
@@ -41,24 +41,19 @@ services:
       retries: 5
     restart: always
 
+
   airflow-init:
     <<: *airflow-common
     container_name: airflow-init
-    entrypoint: /bin/bash
-    command:
-      - -c
-      - |
-        airflow db upgrade && \
-        airflow users create \
-          --username admin \
-          --password admin \
-          --firstname Air \
-          --lastname Flow \
-          --role Admin \
-          --email admin@example.com
+    command: >
+      bash -c "
+        airflow db upgrade &&
+        airflow users create --username admin --password admin --firstname Air --lastname Flow --role Admin --email admin@example.com
+      "
     depends_on:
       postgres:
         condition: service_healthy
+
 
   airflow-webserver:
     <<: *airflow-common
@@ -88,7 +83,7 @@ services:
       - "8081:8081"
     volumes:
       - ./scripts:/app/scripts
-      - ./data:/app/data                # dados parquet para spark
+      - ./data:/app/data                # dados parquet que o Spark vai acessar
     restart: always
 
   streamlit:
@@ -99,11 +94,10 @@ services:
     ports:
       - "8501:8501"
     volumes:
-      - ./data:/opt/airflow/data        # pega todas as camadas (Bronze/Silver/Gold)
+      - ./data/Gold:/opt/airflow/data/Gold
       - ./dashboard:/app
     depends_on:
       - spark
-      - airflow-webserver
     environment:
       - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
     command: streamlit run /app/app.py --server.port=8501 --server.address=0.0.0.0
