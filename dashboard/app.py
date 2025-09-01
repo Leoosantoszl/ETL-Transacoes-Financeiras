@@ -12,16 +12,32 @@ def carregar_dados():
     path = "/opt/airflow/data/Gold"
 
     if not os.path.exists(path):
-        st.warning(f"⚠️ Caminho não encontrado: {path}")
+        st.error(f"⚠️ Caminho não encontrado: {path}")
         return pd.DataFrame()
+    
     try:
-        # Usa pyarrow.dataset para ler todas as partições
-        dataset = ds.dataset(path, format="parquet", partitioning="hive")
-        df = dataset.to_table().to_pandas()
-        st.success("✅ Dados carregados com sucesso!")
+        # Detecta se é um diretório com múltiplos arquivos/parquet particionados
+        if os.path.isdir(path):
+            arquivos = [os.path.join(path, f) for f in os.listdir(path) if f.endswith(".parquet")]
+            if arquivos:
+                df = pd.concat([pd.read_parquet(f) for f in arquivos], ignore_index=True)
+            else:
+                # Tenta usar pyarrow.dataset para diretórios particionados tipo Hive
+                dataset = ds.dataset(path, format="parquet", partitioning="hive")
+                df = dataset.to_table().to_pandas()
+        else:
+            # Se for arquivo único
+            df = pd.read_parquet(path)
+
+        if df.empty:
+            st.warning("⚠️ Dataset lido, mas sem dados.")
+        else:
+            st.success(f"✅ Dados carregados com sucesso! Total de linhas: {len(df)}")
+        
         return df
+
     except Exception as e:
-        st.error(f"⚠️ Erro ao carregar dados particionados: {e}")
+        st.error(f"⚠️ Erro ao carregar os dados: {e}")
         return pd.DataFrame()
 
 # 🟡 Aqui você chama a função e armazena o resultado

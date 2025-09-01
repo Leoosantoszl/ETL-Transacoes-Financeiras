@@ -171,6 +171,11 @@ cd projeto
 
 pip install -r requirements.txt
 
+De permissões a pasta de logs
+
+sudo mkdir -p ~/projeto/logs
+sudo chmod -R 777 ~/projeto/logs
+
 Depois basta rodar o comando para executar o docker
 
 sudo docker-compose up -d

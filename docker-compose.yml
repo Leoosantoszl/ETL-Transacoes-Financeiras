@@ -62,6 +62,7 @@ services:
       - "8080:8080"
     command: webserver
     depends_on:
+      airflow-init:
       postgres:
         condition: service_healthy
 
@@ -70,6 +71,7 @@ services:
     container_name: airflow-scheduler
     command: scheduler
     depends_on:
+      airflow-init:
       postgres:
         condition: service_healthy
 
@@ -102,6 +104,7 @@ services:
       - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
     command: streamlit run /app/app.py --server.port=8501 --server.address=0.0.0.0
     restart: always   
+
 
 volumes:
   postgres_data:
