@@ -63,6 +63,7 @@ services:
     command: webserver
     depends_on:
       airflow-init:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
 
@@ -72,6 +73,7 @@ services:
     command: scheduler
     depends_on:
       airflow-init:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
 

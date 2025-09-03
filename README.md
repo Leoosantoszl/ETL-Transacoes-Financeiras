@@ -236,8 +236,8 @@ Isso irá baixar kaggle.json
 Mova o arquivo para:
 
 mkdir -p secrets
-mv ~/Downloads/kaggle.json secrets/
-chmod 600 secrets/kaggle.json
+mv ~/Downloads/kaggle.json projeto/secrets/
+chmod 600 projeto/secrets/kaggle.json
 
 4️⃣ Subir Containers
 
